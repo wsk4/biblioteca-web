@@ -1,5 +1,20 @@
-import { Component } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import {
+  Component,
+  signal,
+} from '@angular/core';
+
+import {
+  RouterOutlet,
+  RouterLink,
+  RouterLinkActive,
+} from '@angular/router';
+
+import {
+  fetchAuthSession,
+  signInWithRedirect,
+} from 'aws-amplify/auth';
+
+
 
 /**
  * El cascarón: la barra de navegación y el hueco donde el router pone la
@@ -28,4 +43,30 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
   styleUrl: './app.css',
   templateUrl: './app.html',
 })
-export class App {}
+export class App {
+  protected esBibliotecario = signal(false);
+
+  protected async entrar(): Promise<void> {
+    await signInWithRedirect();
+  }
+
+  protected async cargarRol(): Promise<void> {
+    try {
+      const { tokens } = await fetchAuthSession();
+
+      const grupos = (
+        tokens?.accessToken?.payload['cognito:groups'] ?? []
+      ) as string[];
+
+      this.esBibliotecario.set(
+        grupos.includes('bibliotecarios'),
+      );
+    } catch {
+      this.esBibliotecario.set(false);
+    }
+  }
+
+  constructor() {
+    void this.cargarRol();
+  }
+}
