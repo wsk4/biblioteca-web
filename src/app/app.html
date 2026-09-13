@@ -29,6 +29,26 @@
 
 <main>
   <router-outlet />
+
+  <section>
+    <button (click)="cargarPanel()" [disabled]="cargando()">
+      Ver mis prestamos
+    </button>
+
+    @if (cargando()) {
+      <p>Cargando préstamos...</p>
+    }
+
+    <ul>
+      @for (p of panel(); track p.id) {
+        <li>
+          {{ p.libro.titulo }} — {{ p.libro.autor }}, hasta el {{ p.hasta }}
+        </li>
+      } @empty {
+        <li>No tienes prestamos.</li>
+      }
+    </ul>
+  </section>
 </main>
 
 <footer>
