@@ -35,6 +35,10 @@
       Ver mis prestamos
     </button>
 
+    <button (click)="pedirPrestamo(3)">
+      Pedir el libro 3
+    </button>
+
     @if (cargando()) {
       <p>Cargando préstamos...</p>
     }

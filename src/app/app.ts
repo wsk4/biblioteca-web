@@ -43,7 +43,6 @@ type PrestamoConLibro = {
 export class App {
   protected esBibliotecario = signal(false);
 
-  // Tramo 8.2: cliente HTTP y estado del panel.
   private readonly http = inject(HttpClient);
   readonly panel = signal<PrestamoConLibro[]>([]);
   readonly cargando = signal(false);
@@ -84,6 +83,15 @@ export class App {
           console.error('el panel fallo:', error.status, error.error);
           this.cargando.set(false);
         },
+      });
+  }
+
+  pedirPrestamo(libroId: number): void {
+    this.http
+      .post('http://localhost:8080/v1/panel/prestamos', { libroId })
+      .subscribe({
+        next: () => this.cargarPanel(),
+        error: (e) => console.error('el prestamo fallo:', e.status, e.error),
       });
   }
 
